@@ -141,8 +141,6 @@ public class Regex {
                     @Override
                     public Pattern map(List<List<Pattern>> arg) {
                         List<Pattern> ps = new ArrayList<Pattern>();
-                        System.err.println("In `alt` rule map function");
-                        System.err.println("arg = " + arg);
                         ps.add(arg.get(0).get(0));
                         ps.addAll(arg.get(1));
                         return new AltPattern(ps);
@@ -153,7 +151,7 @@ public class Regex {
     }
     public static boolean match(String regex, String text) {
         try {
-            Pattern pattern = regexParser.parse(new RegexTokenizer().tokenize(regex));
+            Pattern pattern = regexParser.parse(new RegexTokenizer().tokenize(regex), true);
             return pattern.match(text);
         } catch (NoParseException e) {
             throw new IllegalArgumentException("Illegal regular expression");
