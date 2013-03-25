@@ -7,7 +7,7 @@ public class LetterPattern extends Pattern {
     private static final Condition LETTER = new Condition() {
         @Override
         public boolean isTrue(char c) {
-            return Character.isLetter(c);
+            return Character.isLetter(c) || Character.isDigit(c) || c == '_';
         }
     };
 
