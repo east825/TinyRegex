@@ -15,4 +15,9 @@ public class LetterPattern extends Pattern {
     public StateMachine compile() {
         return StateMachine.fromCondition(LETTER);
     }
+
+    @Override
+    public String toString() {
+        return "\\w";
+    }
 }

@@ -21,4 +21,9 @@ public class CharPattern extends Pattern {
     public StateMachine compile() {
         return StateMachine.fromCondition(new SingleChar());
     }
+
+    @Override
+    public String toString() {
+        return Character.toString(expected);
+    }
 }

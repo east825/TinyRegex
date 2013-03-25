@@ -21,4 +21,9 @@ public class StarPattern extends Pattern {
         end.addEpsilonTransition(start);
         return new StateMachine(start, end);
     }
+
+    @Override
+    public String toString() {
+        return "(" + inner + ")*";
+    }
 }

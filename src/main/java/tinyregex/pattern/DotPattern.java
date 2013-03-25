@@ -15,4 +15,9 @@ public class DotPattern extends Pattern {
     public StateMachine compile() {
         return StateMachine.fromCondition(ANY);
     }
+
+    @Override
+    public String toString() {
+        return ".";
+    }
 }

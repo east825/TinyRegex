@@ -15,4 +15,9 @@ public class SpacePattern extends Pattern {
     public StateMachine compile() {
         return StateMachine.fromCondition(SPACE);
     }
+
+    @Override
+    public String toString() {
+        return "\\s";
+    }
 }

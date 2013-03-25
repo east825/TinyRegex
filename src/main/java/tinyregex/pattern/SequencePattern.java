@@ -24,4 +24,13 @@ public class SequencePattern extends Pattern {
         }
         return new StateMachine(start, next);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Pattern p : patterns) {
+            sb.append(p);
+        }
+        return sb.toString();
+    }
 }
