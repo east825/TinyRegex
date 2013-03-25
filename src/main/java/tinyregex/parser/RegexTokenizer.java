@@ -4,7 +4,7 @@ import java.util.*;
 
 public class RegexTokenizer {
 
-    private static final Set<Character> METASYMBOLS = new HashSet<Character>(Arrays.asList('.', '+', '-', '\\'));
+    private static final Set<Character> METASYMBOLS = new HashSet<Character>(Arrays.asList('.', '+', '-', '\\', '(', ')'));
     private static final Set<Character> CHARCLASSES = new HashSet<Character>(Arrays.asList('w', 's'));
 
     private static Token charToken(String type, char c) {
