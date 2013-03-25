@@ -26,6 +26,6 @@ public final class TokenParser extends Parser<Token> {
             result = t;
             return pos + 1;
         }
-        throw new NoParseException("Unexpected token " + t + "at " + pos);
+        throw new NoParseException("Unexpected token " + t + " at " + pos);
     }
 }
