@@ -15,7 +15,8 @@ public final class SeqParser<T> extends Parser<List<T>> {
     protected int parse(List<Token> toks, int pos) throws NoParseException {
         for (Parser<T> p : parsers) {
             pos = p.parse(toks, pos);
-            result.add(p.result());
+            if (!(p instanceof IgnoredResultParser))
+                result.add(p.result());
         }
         parsed = true;
         return pos;

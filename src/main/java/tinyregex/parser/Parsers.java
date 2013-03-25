@@ -29,15 +29,7 @@ public class Parsers {
     public static <T> Parser<List<T>> oneplus(Parser<T> p) {
         return map(
                 seq(
-                        map(
-                                p,
-                                // wrap single element of type T to List<T> containing it
-                                new MapFunction<T, List<T>>() {
-                                    @Override
-                                    public List<T> map(T arg) {
-                                        return Collections.singletonList(arg);
-                                    }
-                                }),
+                        expanded(p),
                         many(p)
                 ),
                 new MapFunction<List<List<T>>, List<T>>() {
@@ -62,6 +54,34 @@ public class Parsers {
 
     public static <T1, T2> MapParser<T1, T2> map(Parser<T1> p, MapFunction<? super T1, ? extends T2> f) {
         return new MapParser<T1, T2>(p, f);
+    }
+
+    public static <T> IgnoredResultParser<T> skip(Parser<?> p, Class<T> cls) {
+        return new IgnoredResultParser<T>(p);
+    }
+
+    public static <T> Parser<T> collapsed(Parser<List<T>> p) {
+        return map(
+                p,
+                new MapFunction<List<T>, T>() {
+                    @Override
+                    public T map(List<T> arg) {
+                        return arg.get(0);
+                    }
+                }
+        );
+    }
+
+    public static <T> Parser<List<T>> expanded(Parser<T> p) {
+        return map(
+                p,
+                new MapFunction<T, List<T>>() {
+                    @Override
+                    public List<T> map(T arg) {
+                        return Collections.singletonList(arg);
+                    }
+                }
+        );
     }
 
 
