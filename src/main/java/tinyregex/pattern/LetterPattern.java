@@ -18,6 +18,6 @@ public class LetterPattern extends Pattern {
 
     @Override
     public String toString() {
-        return "\\w";
+        return "<LetterPattern>";
     }
 }

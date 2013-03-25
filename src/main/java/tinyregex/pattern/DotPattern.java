@@ -18,6 +18,6 @@ public class DotPattern extends Pattern {
 
     @Override
     public String toString() {
-        return ".";
+        return "<DotPattern>";
     }
 }

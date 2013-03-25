@@ -24,6 +24,6 @@ public class StarPattern extends Pattern {
 
     @Override
     public String toString() {
-        return "(" + inner + ")*";
+        return "<StarPattern: " + inner + ">";
     }
 }

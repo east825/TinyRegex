@@ -29,10 +29,12 @@ public class AltPattern extends Pattern {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(patterns.get(0).toString());
+        StringBuilder sb = new StringBuilder("<AltPattern: ");
+        sb.append(patterns.get(0));
         for (Pattern p : patterns.subList(1, patterns.size())) {
-            sb.append('|').append(p);
+            sb.append(" | ").append(p);
         }
+        sb.append(">");
         return sb.toString();
     }
 }

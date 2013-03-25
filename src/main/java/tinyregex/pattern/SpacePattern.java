@@ -18,6 +18,6 @@ public class SpacePattern extends Pattern {
 
     @Override
     public String toString() {
-        return "\\s";
+        return "<SpacePattern>";
     }
 }

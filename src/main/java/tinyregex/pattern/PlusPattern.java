@@ -20,4 +20,9 @@ public class PlusPattern extends Pattern {
         end.addEpsilonTransition(start);
         return new StateMachine(start, end);
     }
+
+    @Override
+    public String toString() {
+        return "<PlusPattern: " + inner + ">";
+    }
 }

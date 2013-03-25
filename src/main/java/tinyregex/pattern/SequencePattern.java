@@ -27,10 +27,14 @@ public class SequencePattern extends Pattern {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Pattern p : patterns) {
-            sb.append(p);
+        StringBuilder sb = new StringBuilder("<SequencePattern: ");
+        if (!patterns.isEmpty()) {
+            sb.append(patterns.get(0));
+            for (Pattern p : patterns.subList(1, patterns.size())) {
+                sb.append(", ").append(p);
+            }
         }
+        sb.append(">");
         return sb.toString();
     }
 }

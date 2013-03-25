@@ -24,6 +24,6 @@ public class CharPattern extends Pattern {
 
     @Override
     public String toString() {
-        return Character.toString(expected);
+        return "<CharPattern: '" + expected + "'>";
     }
 }
