@@ -1,7 +1,5 @@
 package tinyregex.parser;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,14 +13,11 @@ public final class AltParser<T>  extends Parser<T> {
     }
 
     @Override
-    protected int parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<T> parse(List<Token> toks, int pos) throws NoParseException {
         NoParseException lastException = null;
         for (Parser<T> p: parsers) {
             try {
-                int nextPos = p.parse(toks, pos);
-                parsed = true;
-                result = p.result();
-                return nextPos;
+                return p.parse(toks, pos);
             } catch (NoParseException e) {
                 lastException = e;
             }

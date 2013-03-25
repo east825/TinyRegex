@@ -10,7 +10,8 @@ public final class IgnoredResultParser<T> extends Parser<T> {
     }
 
     @Override
-    protected int parse(List<Token> toks, int pos) throws NoParseException {
-        return parser.parse(toks, pos);
+    protected Result<T> parse(List<Token> toks, int pos) throws NoParseException {
+        Result<?> res = parser.parse(toks, pos);
+        return new Result<T>(null, res.nextPos);
     }
 }

@@ -7,18 +7,17 @@ public final class MaybeParser<T>  extends Parser<T> {
 
     public MaybeParser(Parser<T> p) {
         parser = p;
-        // if inner parser can't match anything, null will be returned by default
-        result = null;
     }
 
     @Override
-    protected int parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<T> parse(List<Token> toks, int pos) throws NoParseException {
         try {
-            pos = parser.parse(toks, pos);
+            return parser.parse(toks, pos);
         } catch (NoParseException e) {
             // ignored
         }
-        parsed = true;
-        return pos;
+        // return null by default
+        return new Result<T>(null, pos);
     }
+
 }

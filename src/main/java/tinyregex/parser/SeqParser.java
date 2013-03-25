@@ -8,18 +8,18 @@ public final class SeqParser<T> extends Parser<List<T>> {
 
     protected SeqParser(List<? extends Parser<T>> ps) {
         parsers.addAll(ps);
-        result = new ArrayList<T>();
     }
 
     @Override
-    protected int parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<List<T>> parse(List<Token> toks, int pos) throws NoParseException {
+        List<T> acc = new ArrayList<T>();
         for (Parser<T> p : parsers) {
-            pos = p.parse(toks, pos);
+            Result<T> res = p.parse(toks, pos);
+            pos = res.nextPos;
             if (!(p instanceof IgnoredResultParser))
-                result.add(p.result());
+                acc.add(res.data);
         }
-        parsed = true;
-        return pos;
+        return new Result<List<T>>(acc, pos);
     }
 }
 

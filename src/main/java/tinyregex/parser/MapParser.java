@@ -12,12 +12,8 @@ public class MapParser<T1, T2> extends Parser<T2> {
     }
 
     @Override
-    public int parse(List<Token> toks, int pos) throws NoParseException {
-        return parser.parse(toks, pos);
-    }
-
-    @Override
-    public T2 result() {
-        return fun.map(parser.result());
+    public Result<T2> parse(List<Token> toks, int pos) throws NoParseException {
+        Result<T1> res = parser.parse(toks, pos);
+        return new Result<T2>(fun.map(res.data), res.nextPos);
     }
 }

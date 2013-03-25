@@ -16,15 +16,13 @@ public final class TokenParser extends Parser<Token> {
     }
 
     @Override
-    protected int parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<Token> parse(List<Token> toks, int pos) throws NoParseException {
         if (pos >= toks.size()) {
             throw new NoParseException("Unexpected end of token sequence");
         }
         Token t = toks.get(pos);
         if (type.equals(t.type) && (value == null || value.equals(t.value))) {
-            parsed = true;
-            result = t;
-            return pos + 1;
+            return new Result<Token>(t, pos + 1);
         }
         throw new NoParseException("Unexpected token " + t + " at " + pos);
     }

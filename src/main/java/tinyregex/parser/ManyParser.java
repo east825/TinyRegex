@@ -8,20 +8,20 @@ public final class ManyParser<T> extends Parser<List<T>> {
 
     public ManyParser(Parser<T> p) {
         parser = p;
-        result = new ArrayList<T>();
     }
 
     @Override
-    protected int parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<List<T>> parse(List<Token> toks, int pos) throws NoParseException {
+        List<T> acc = new ArrayList<T>();
         try {
             while (true) {
-                pos = parser.parse(toks, pos);
-                result.add(parser.result());
+                Result<T> res = parser.parse(toks, pos);
+                pos = res.nextPos;
+                acc.add(res.data);
             }
         } catch (NoParseException e) {
             // ignored  - ManyParser terminates successfully even if it can't be matched
         }
-        parsed = true;
-        return pos;
+        return new Result<List<T>>(acc, pos);
     }
 }

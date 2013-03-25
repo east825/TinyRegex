@@ -10,15 +10,10 @@ public final class ForwardParser<T> extends Parser<T> {
     }
 
     @Override
-    protected int parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<T> parse(List<Token> toks, int pos) throws NoParseException {
         if (parser == null) {
             throw new IllegalStateException("Forward parser was not defined");
         }
         return parser.parse(toks, pos);
-    }
-
-    @Override
-    protected T result() {
-        return parser.result();
     }
 }
