@@ -9,6 +9,10 @@ import java.util.List;
 import static tinyregex.parser.Parsers.*;
 
 public class Regex {
+
+
+    private static final Parser<Pattern> regexParser = buildParser();
+
     /**
      * Regex grammar:
      * <p/>
@@ -21,135 +25,138 @@ public class Regex {
      * star = repeatable, '+'
      * group ::= '(', alt, ')'
      */
-    public static void main(String[] args) throws Exception {
+    private static synchronized Parser<Pattern> buildParser() {
         ForwardParser<Pattern> alt = fwd();
         Parser<Pattern> character = map(
-                                           tok("char"),
-                                           new MapFunction<Token, Pattern>() {
-                                               @Override
-                                               public Pattern map(Token arg) {
-                                                   return new CharPattern(arg.value.charAt(0));
-                                               }
-                                           }
+                tok("char"),
+                new MapFunction<Token, Pattern>() {
+                    @Override
+                    public Pattern map(Token arg) {
+                        return new CharPattern(arg.value.charAt(0));
+                    }
+                }
         );
         Parser<Pattern> charclass = map(
-                                           tok("charclass"),
-                                           new MapFunction<Token, Pattern>() {
-                                               @Override
-                                               public Pattern map(Token arg) {
-                                                   if (arg.value.equals("w"))
-                                                       return new LetterPattern();
-                                                   return new SpacePattern();
-                                               }
-                                           }
+                tok("charclass"),
+                new MapFunction<Token, Pattern>() {
+                    @Override
+                    public Pattern map(Token arg) {
+                        if (arg.value.equals("w"))
+                            return new LetterPattern();
+                        return new SpacePattern();
+                    }
+                }
         );
         Parser<Pattern> group = map(
-                                       seq(
-                                              skip(tok("meta", "("), Pattern.class),
-                                              alt,
-                                              skip(tok("meta", ")"), Pattern.class)
+                seq(
+                        skip(tok("meta", "("), Pattern.class),
+                        alt,
+                        skip(tok("meta", ")"), Pattern.class)
 
-                                       ),
-                                       new MapFunction<List<Pattern>, Pattern>() {
-                                           @Override
-                                           public Pattern map(List<Pattern> arg) {
-                                               return arg.get(0);
-                                           }
-                                       }
+                ),
+                new MapFunction<List<Pattern>, Pattern>() {
+                    @Override
+                    public Pattern map(List<Pattern> arg) {
+                        return arg.get(0);
+                    }
+                }
         );
 
         Parser<Pattern> dot = map(
-                                     tok("meta", "."),
-                                     new MapFunction<Token, Pattern>() {
-                                         @Override
-                                         public Pattern map(Token arg) {
-                                             return new DotPattern();
-                                         }
-                                     }
+                tok("meta", "."),
+                new MapFunction<Token, Pattern>() {
+                    @Override
+                    public Pattern map(Token arg) {
+                        return new DotPattern();
+                    }
+                }
         );
 
         Parser<Pattern> repeatable = alt(
-                                            group,
-                                            charclass,
-                                            character,
-                                            dot
+                group,
+                charclass,
+                character,
+                dot
         );
 
         Parser<Pattern> star = map(
-                                      seq(
-                                             repeatable,
-                                             skip(tok("meta", "*"), Pattern.class)
-                                      ),
-                                      new MapFunction<List<Pattern>, Pattern>() {
-                                          @Override
-                                          public Pattern map(List<Pattern> arg) {
-                                              return new StarPattern(arg.get(0));
-                                          }
-                                      }
+                seq(
+                        repeatable,
+                        skip(tok("meta", "*"), Pattern.class)
+                ),
+                new MapFunction<List<Pattern>, Pattern>() {
+                    @Override
+                    public Pattern map(List<Pattern> arg) {
+                        return new StarPattern(arg.get(0));
+                    }
+                }
         );
 
         Parser<Pattern> plus = map(
-                                      seq(
-                                             repeatable,
-                                             skip(tok("meta", "+"), Pattern.class)
-                                      ),
-                                      new MapFunction<List<Pattern>, Pattern>() {
-                                          @Override
-                                          public Pattern map(List<Pattern> arg) {
-                                              return new PlusPattern(arg.get(0));
-                                          }
-                                      }
+                seq(
+                        repeatable,
+                        skip(tok("meta", "+"), Pattern.class)
+                ),
+                new MapFunction<List<Pattern>, Pattern>() {
+                    @Override
+                    public Pattern map(List<Pattern> arg) {
+                        return new PlusPattern(arg.get(0));
+                    }
+                }
         );
 
         Parser<Pattern> seq = map(
-                                     many(
-                                             alt(
-                                                    star,
-                                                    plus,
-                                                    repeatable
-                                             )
-                                     ),
-                                     new MapFunction<List<Pattern>, Pattern>() {
-                                         @Override
-                                         public Pattern map(List<Pattern> arg) {
-                                             return new SequencePattern(arg);
-                                         }
-                                     }
+                many(
+                        alt(
+                                star,
+                                plus,
+                                repeatable
+                        )
+                ),
+                new MapFunction<List<Pattern>, Pattern>() {
+                    @Override
+                    public Pattern map(List<Pattern> arg) {
+                        return new SequencePattern(arg);
+                    }
+                }
         );
 
         alt.define(map(
-                          // List<List<Pattern>>
-                          seq(
-                                 // Pattern -> List<Pattern>
-                                 expanded(seq),
-                                 // List<Pattern>
-                                 many(
-                                         // List<Pattern> -> Pattern
-                                         collapsed(
-                                                      seq(
-                                                             skip(tok("meta", "|"), Pattern.class),
-                                                             seq
-                                                      )
-                                         )
-                                 )
-                          ),
-                          new MapFunction<List<List<Pattern>>, Pattern>() {
-                              @Override
-                              public Pattern map(List<List<Pattern>> arg) {
-                                  List<Pattern> ps = new ArrayList<Pattern>();
-                                  System.err.println("In `alt` rule map function");
-                                  System.err.println("arg = " + arg);
-                                  ps.add(arg.get(0).get(0));
-                                  ps.addAll(arg.get(1));
-                                  return new AltPattern(ps);
-                              }
-                          }
+                // List<List<Pattern>>
+                seq(
+                        // Pattern -> List<Pattern>
+                        expanded(seq),
+                        // List<Pattern>
+                        many(
+                                // List<Pattern> -> Pattern
+                                collapsed(
+                                        seq(
+                                                skip(tok("meta", "|"), Pattern.class),
+                                                seq
+                                        )
+                                )
+                        )
+                ),
+                new MapFunction<List<List<Pattern>>, Pattern>() {
+                    @Override
+                    public Pattern map(List<List<Pattern>> arg) {
+                        List<Pattern> ps = new ArrayList<Pattern>();
+                        System.err.println("In `alt` rule map function");
+                        System.err.println("arg = " + arg);
+                        ps.add(arg.get(0).get(0));
+                        ps.addAll(arg.get(1));
+                        return new AltPattern(ps);
+                    }
+                }
         ));
-
-        Parser<Pattern> regex = alt;
-        List<Token> toks = new RegexTokenizer().tokenize("(a)*|foo|bar");
-        System.out.println(toks);
-        System.out.println(regex.parse(toks, true));
-
+        return alt;
+    }
+    public static boolean match(String regex, String text) {
+        try {
+            Pattern pattern = regexParser.parse(new RegexTokenizer().tokenize(regex));
+            return pattern.match(text);
+        } catch (NoParseException e) {
+            throw new IllegalArgumentException("Illegal regular expression");
+        }
     }
 }
