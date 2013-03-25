@@ -17,9 +17,13 @@ public class RegexTokenizer {
         for (int i = 0; i < chars.length; i++) {
             if (i < s.length() - 1 && chars[i] == '\\') {
                 if (METASYMBOLS.contains(chars[i + 1])) {
-                    toks.add(charToken("char", chars[i]));
+                    toks.add(charToken("char", chars[i + 1]));
                 } else if (CHARCLASSES.contains(chars[i + 1])) {
                     toks.add(charToken("charclass", chars[i + 1]));
+                } else if (chars[i + 1] == 'n') {
+                    toks.add(charToken("char", '\n'));
+                } else if (chars[i + 1] == 't') {
+                    toks.add(charToken("char", '\t'));
                 } else {
                     throw new IllegalArgumentException("Illegal escape sequence: " + s.substring(i, i + 2));
                 }
