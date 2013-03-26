@@ -6,7 +6,7 @@ import java.util.List;
 public final class SeqParser<T> extends Parser<List<T>> {
     private final List<Parser<T>> parsers = new ArrayList<Parser<T>>();
 
-    protected SeqParser(List<? extends Parser<T>> ps) {
+    public SeqParser(List<? extends Parser<T>> ps) {
         parsers.addAll(ps);
     }
 

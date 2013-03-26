@@ -26,6 +26,7 @@ public class Parsers {
         return new ManyParser<T>(p);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> Parser<List<T>> oneplus(Parser<T> p) {
         return map(
                 seq(
@@ -35,8 +36,7 @@ public class Parsers {
                 new MapFunction<List<List<T>>, List<T>>() {
                     @Override
                     public List<T> map(List<List<T>> arg) {
-                        List<T> result = new ArrayList<T>();
-                        result.addAll(arg.get(0)); // should be one element list
+                        List<T> result = new ArrayList<T>(arg.get(0)); // should be one element list
                         result.addAll(arg.get(1)); // remaining args
                         return result;
                     }

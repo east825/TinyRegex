@@ -25,7 +25,8 @@ public class Regex {
      * star = repeatable, '+'
      * group ::= '(', alt, ')'
      */
-    private static synchronized Parser<Pattern> buildParser() {
+    @SuppressWarnings("unchecked")
+    private static Parser<Pattern> buildParser() {
         ForwardParser<Pattern> alt = fwd();
         Parser<Pattern> character = map(
                 tok("char"),

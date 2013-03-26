@@ -1,15 +1,10 @@
 package tinyregex.pattern.nfa;
 
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.Set;
 
 public class StateMachine {
-    private State start, end;
-
-    public static StateMachine fromTransition(Transition t) {
-        return new StateMachine(t.source(), t.destination());
-    }
+    private final State start, end;
 
     public static StateMachine fromCondition(Condition c) {
         State start = new State();
@@ -31,12 +26,8 @@ public class StateMachine {
         return end;
     }
 
-    public void connect(StateMachine other) {
-        end.addEpsilonTransition(other.startState());
-        end = other.endState();
-    }
-
     public boolean match(String input) {
+        // without overriden hashCode() method, it should behave just like IdentitySet
         Set<State> reachable = new HashSet<State>();
         reachable.add(start);
         expand(reachable);

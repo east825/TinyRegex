@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class State {
+    private final Set<State> epsilonTransitions = new HashSet<State>();
     private Transition toNext;
-    private Set<State> epsilonTransitions = new HashSet<State>();
 
 
     public void setConditionalTransition(Condition c, State s) {
@@ -26,9 +26,5 @@ public class State {
 
     public State nextState() {
         return toNext.destination();
-    }
-
-    public boolean isTerminal() {
-        return toNext == null && epsilonTransitions.isEmpty();
     }
 }

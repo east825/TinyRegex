@@ -6,22 +6,22 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static tinyregex.pattern.Patterns.*;
 
-public class RegexTest {
+public class PatternTest {
 
     @Test
     public void starPattern() {
         Pattern p = star(ch('a'));
-        assertThat(p.match("aa"), is(true));
-        assertThat(p.match(""), is(true));
-        assertThat(p.match("b"), is(true));
+        assertTrue(p.match("aa"));
+        assertTrue(p.match(""));
+        assertTrue(p.match("b"));
     }
 
     @Test
     public void seqPattern() {
         Pattern p = seq(ch('a'), ch('b'));
-        assertThat(p.match("abc"), is(true));
-        assertThat(p.match("acb"), is(false));
-        assertThat(p.match(""), is(false));
+        assertTrue(p.match("abc"));
+        assertFalse(p.match("acb"));
+        assertFalse(p.match(""));
 
     }
 

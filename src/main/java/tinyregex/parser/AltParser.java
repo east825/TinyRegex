@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class AltParser<T>  extends Parser<T> {
-    private List<Parser<T>> parsers = new ArrayList<Parser<T>>();
+    private final List<Parser<T>> parsers = new ArrayList<Parser<T>>();
 
     public AltParser(List<? extends Parser<T>> ps) {
         if (ps.isEmpty())

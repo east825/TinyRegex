@@ -2,8 +2,8 @@ package tinyregex;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static tinyregex.Regex.match;
 
 public class MatchTest {
