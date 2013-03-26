@@ -107,7 +107,7 @@ public class Regex {
         );
 
         Parser<Pattern> seq = map(
-                many(
+                oneplus(
                         alt(
                                 star,
                                 plus,
