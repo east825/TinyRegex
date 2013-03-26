@@ -1,6 +1,7 @@
 package tinyregex.pattern.nfa;
 
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Set;
 
 public class StateMachine {
@@ -64,15 +65,17 @@ public class StateMachine {
     }
 
     private void expand(Set<State> reachable) {
-        Set<State> epsilonReachable = new HashSet<State>();
-        int oldSize;
-        do {
-            oldSize = reachable.size();
-            for (State s : reachable) {
-                epsilonReachable.addAll(s.epsilonAdjacent());
+        Set<State> fringe = new HashSet<State>(reachable);
+        while (!fringe.isEmpty()) {
+            Set<State> unvisited = new HashSet<State>();
+            for (State s : fringe) {
+                unvisited.addAll(s.epsilonAdjacent());
             }
-            reachable.addAll(epsilonReachable);
-        } while (reachable.size() != oldSize);
+            // new states, that not considered yet
+            unvisited.removeAll(reachable);
+            fringe = unvisited;
+            reachable.addAll(unvisited);
+        }
     }
 
     private boolean containsTerminateState(Set<State> states) {
