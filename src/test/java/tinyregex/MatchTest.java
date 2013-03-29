@@ -100,5 +100,14 @@ public class MatchTest {
         checkMalformedRegex("a|");
     }
 
+    @Test(timeout = 500)
+    public void memoized() {
+        int depth = 100;
+        StringBuilder sb = new StringBuilder(".");
+        for (int i = 0; i < depth; i++)
+            sb.insert(0, '(').append(')');
+        Regex.match(sb.toString(), "a");
+    }
+
 
 }

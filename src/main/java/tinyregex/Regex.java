@@ -1,23 +1,25 @@
 package tinyregex;
 
-import tinyregex.parser.ForwardParser;
-import tinyregex.parser.MapFunction;
-import tinyregex.parser.NoParseException;
-import tinyregex.parser.Parser;
+import tinyregex.parser.*;
 import tinyregex.parser.lexer.RegexTokenizer;
 import tinyregex.parser.lexer.Token;
 import tinyregex.pattern.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static tinyregex.parser.Parsers.*;
 
 public class Regex {
 
 
-    private static final Parser<Pattern> regexParser = buildParser();
+    private static final List<Memoized<?>> memoizedRegistry = new LinkedList<Memoized<?>>();
+    private static <T> Memoized<T> memoizeAndAddToRegistry(Parser<T> p) {
+        Memoized<T> memoized = memo(p);
+        memoizedRegistry.add(memoized);
+        return memoized;
+    }
 
+    private static final Parser<Pattern> regexParser = buildParser();
     /**
      * Regex grammar:
      * <p/>
@@ -78,12 +80,12 @@ public class Regex {
                 }
         );
 
-        Parser<Pattern> repeatable = alt(
+        Parser<Pattern> repeatable = memoizeAndAddToRegistry(alt(
                 group,
                 charclass,
                 character,
                 dot
-        );
+        ));
 
         Parser<Pattern> star = map(
                 seq(
@@ -155,8 +157,12 @@ public class Regex {
         ));
         return alt;
     }
-    public static boolean match(String regex, String text) {
+
+
+    public static synchronized boolean match(String regex, String text) {
         try {
+            for (Memoized<?> m : memoizedRegistry)
+                m.reset();
             Pattern pattern = regexParser.parse(new RegexTokenizer().tokenize(regex), true);
             return pattern.match(text);
         } catch (NoParseException e) {

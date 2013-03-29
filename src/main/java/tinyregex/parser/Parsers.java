@@ -32,6 +32,10 @@ public class Parsers {
         return new ManyParser<T>(p);
     }
 
+    public static <T> Memoized<T> memo(Parser<T> p) {
+        return new Memoized<T>(p);
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> Parser<List<T>> oneplus(Parser<T> p) {
         return map(
