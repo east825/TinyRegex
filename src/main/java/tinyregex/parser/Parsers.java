@@ -1,17 +1,23 @@
 package tinyregex.parser;
 
+import tinyregex.parser.lexer.Token;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Parsers {
+    private static Token.Type tokenTypeByName(String name) {
+        return Token.Type.valueOf(name.toUpperCase());
+    }
+
     public static Parser<Token> tok(String name, String value) {
-        return new TokenParser(name, value);
+        return new TokenParser(tokenTypeByName(name), value);
     }
 
     public static Parser<Token> tok(String name) {
-        return new TokenParser(name);
+        return new TokenParser(tokenTypeByName(name));
     }
 
     public static <T> SeqParser<T> seq(Parser<T>... ps) {

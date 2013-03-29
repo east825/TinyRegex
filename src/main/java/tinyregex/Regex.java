@@ -1,6 +1,11 @@
 package tinyregex;
 
-import tinyregex.parser.*;
+import tinyregex.parser.ForwardParser;
+import tinyregex.parser.MapFunction;
+import tinyregex.parser.NoParseException;
+import tinyregex.parser.Parser;
+import tinyregex.parser.lexer.RegexTokenizer;
+import tinyregex.parser.lexer.Token;
 import tinyregex.pattern.*;
 
 import java.util.ArrayList;

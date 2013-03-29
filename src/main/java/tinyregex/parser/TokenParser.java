@@ -1,16 +1,18 @@
 package tinyregex.parser;
 
+import tinyregex.parser.lexer.Token;
+
 import java.util.List;
 
 public final class TokenParser extends Parser<Token> {
-    private final String type;
+    private final Token.Type type;
     private final String value;
 
-    public TokenParser(String type) {
+    public TokenParser(Token.Type type) {
         this(type, null);
     }
 
-    public TokenParser(String type, String value) {
+    public TokenParser(Token.Type type, String value) {
         this.type = type;
         this.value = value;
     }
@@ -21,7 +23,7 @@ public final class TokenParser extends Parser<Token> {
             throw new NoParseException("Unexpected end of token sequence");
         }
         Token t = toks.get(pos);
-        if (type.equals(t.type) && (value == null || value.equals(t.value))) {
+        if (type == t.type && (value == null || value.equals(t.value))) {
             return new Result<Token>(t, pos + 1);
         }
         throw new NoParseException("Unexpected token " + t + " at " + pos);

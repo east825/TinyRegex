@@ -1,5 +1,7 @@
 package tinyregex.parser;
 
+import tinyregex.parser.lexer.Token;
+
 import java.util.List;
 
 public class MapParser<T1, T2> extends Parser<T2> {

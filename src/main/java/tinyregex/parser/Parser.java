@@ -1,5 +1,7 @@
 package tinyregex.parser;
 
+import tinyregex.parser.lexer.Token;
+
 import java.util.List;
 
 public abstract class Parser<T> {

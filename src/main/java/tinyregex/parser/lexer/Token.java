@@ -1,10 +1,15 @@
-package tinyregex.parser;
+package tinyregex.parser.lexer;
 
 public final class Token {
-    public final String type;
+    public static enum Type {
+        META,
+        CHAR,
+        CHARCLASS
+    }
+    public final Type type;
     public final String value;
 
-    public Token(String type, String value) {
+    public Token(Type type, String value) {
         this.type = type;
         this.value = value;
     }
@@ -16,7 +21,7 @@ public final class Token {
 
         Token token = (Token) o;
 
-        if (type != null ? !type.equals(token.type) : token.type != null) return false;
+        if (type != token.type) return false;
         if (value != null ? !value.equals(token.value) : token.value != null) return false;
 
         return true;
