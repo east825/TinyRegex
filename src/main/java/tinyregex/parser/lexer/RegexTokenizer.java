@@ -13,7 +13,7 @@ public class RegexTokenizer {
 
     public List<Token> tokenize(String s) {
         List<Token> toks = new ArrayList<Token>();
-        char[]  chars = s.toCharArray();
+        char[] chars = s.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (i < s.length() - 1 && chars[i] == '\\') {
                 if (METASYMBOLS.contains(chars[i + 1])) {
@@ -28,9 +28,7 @@ public class RegexTokenizer {
                     throw new IllegalArgumentException("Illegal escape sequence: " + s.substring(i, i + 2));
                 }
                 i++;
-                continue;
-            }
-            if (METASYMBOLS.contains(chars[i])) {
+            } else if (METASYMBOLS.contains(chars[i])) {
                 toks.add(charToken(Token.Type.META, chars[i]));
             } else {
                 toks.add(charToken(Token.Type.CHAR, chars[i]));
