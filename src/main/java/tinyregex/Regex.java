@@ -8,6 +8,7 @@ import tinyregex.pattern.*;
 import java.util.*;
 
 import static tinyregex.parser.Parsers.*;
+import static tinyregex.parser.lexer.Token.Type;
 
 public class Regex {
 
@@ -28,7 +29,7 @@ public class Regex {
     private static Parser<Pattern> buildParser() {
         ForwardParser<Pattern> alt = fwd();
         Parser<Pattern> character = map(
-                tok("char"),
+                tok(Type.CHAR),
                 new MapFunction<Token, Pattern>() {
                     @Override
                     public Pattern map(Token arg) {
@@ -37,7 +38,7 @@ public class Regex {
                 }
         );
         Parser<Pattern> charclass = map(
-                tok("charclass"),
+                tok(Type.CHARCLASS),
                 new MapFunction<Token, Pattern>() {
                     @Override
                     public Pattern map(Token arg) {
@@ -49,9 +50,9 @@ public class Regex {
         );
         Parser<Pattern> group = map(
                 seq(
-                        skip(tok("meta", "("), Pattern.class),
+                        skip(tok(Type.META, "("), Pattern.class),
                         alt,
-                        skip(tok("meta", ")"), Pattern.class)
+                        skip(tok(Type.META, ")"), Pattern.class)
 
                 ),
                 new MapFunction<List<Pattern>, Pattern>() {
@@ -63,7 +64,7 @@ public class Regex {
         );
 
         Parser<Pattern> dot = map(
-                tok("meta", "."),
+                tok(Type.META, "."),
                 new MapFunction<Token, Pattern>() {
                     @Override
                     public Pattern map(Token arg) {
@@ -82,7 +83,7 @@ public class Regex {
         Parser<Pattern> star = map(
                 seq(
                         repeatable,
-                        skip(tok("meta", "*"), Pattern.class)
+                        skip(tok(Type.META, "*"), Pattern.class)
                 ),
                 new MapFunction<List<Pattern>, Pattern>() {
                     @Override
@@ -95,7 +96,7 @@ public class Regex {
         Parser<Pattern> plus = map(
                 seq(
                         repeatable,
-                        skip(tok("meta", "+"), Pattern.class)
+                        skip(tok(Type.META, "+"), Pattern.class)
                 ),
                 new MapFunction<List<Pattern>, Pattern>() {
                     @Override
@@ -131,7 +132,7 @@ public class Regex {
                                 // List<Pattern> -> Pattern
                                 collapsed(
                                         seq(
-                                                skip(tok("meta", "|"), Pattern.class),
+                                                skip(tok(Type.META, "|"), Pattern.class),
                                                 seq
                                         )
                                 )

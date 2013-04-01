@@ -8,16 +8,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class Parsers {
-    private static Token.Type tokenTypeByName(String name) {
-        return Token.Type.valueOf(name.toUpperCase());
+    public static Parser<Token> tok(Token.Type type, String value) {
+        return new TokenParser(type, value);
     }
 
-    public static Parser<Token> tok(String name, String value) {
-        return new TokenParser(tokenTypeByName(name), value);
-    }
-
-    public static Parser<Token> tok(String name) {
-        return new TokenParser(tokenTypeByName(name));
+    public static Parser<Token> tok(Token.Type type) {
+        return new TokenParser(type);
     }
 
     public static <T> SeqParser<T> seq(Parser<T>... ps) {
