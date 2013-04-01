@@ -11,14 +11,6 @@ import static tinyregex.parser.Parsers.*;
 
 public class Regex {
 
-
-    private static final List<Memoized<?>> memoizedRegistry = new LinkedList<Memoized<?>>();
-    private static <T> Memoized<T> memoizeAndAddToRegistry(Parser<T> p) {
-        Memoized<T> memoized = memo(p);
-        memoizedRegistry.add(memoized);
-        return memoized;
-    }
-
     private static final Parser<Pattern> regexParser = buildParser();
     /**
      * Regex grammar:
@@ -80,7 +72,7 @@ public class Regex {
                 }
         );
 
-        Parser<Pattern> repeatable = memoizeAndAddToRegistry(alt(
+        Parser<Pattern> repeatable = memo(alt(
                 group,
                 charclass,
                 character,
@@ -161,8 +153,6 @@ public class Regex {
 
     public static synchronized boolean match(String regex, String text) {
         try {
-            for (Memoized<?> m : memoizedRegistry)
-                m.reset();
             Pattern pattern = regexParser.parse(new RegexTokenizer().tokenize(regex), true);
             return pattern.match(text);
         } catch (NoParseException e) {

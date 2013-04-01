@@ -32,8 +32,8 @@ public class Parsers {
         return new ManyParser<T>(p);
     }
 
-    public static <T> Memoized<T> memo(Parser<T> p) {
-        return new Memoized<T>(p);
+    public static <T> MemoizedParser<T> memo(Parser<T> p) {
+        return new MemoizedParser<T>(p);
     }
 
     @SuppressWarnings("unchecked")

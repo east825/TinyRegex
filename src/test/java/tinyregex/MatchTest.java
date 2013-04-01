@@ -16,7 +16,7 @@ public class MatchTest {
 
     private void checkMalformedRegex(String regex) {
         exception.expect(IllegalArgumentException.class);
-        exception.expectMessage(containsString("Illegal regular expression"));
+        exception.expectMessage("Illegal regular expression");
         match(regex, "");
     }
 
@@ -106,7 +106,7 @@ public class MatchTest {
         StringBuilder sb = new StringBuilder(".");
         for (int i = 0; i < depth; i++)
             sb.insert(0, '(').append(')');
-        Regex.match(sb.toString(), "a");
+        match(sb.toString(), "a");
     }
 
 

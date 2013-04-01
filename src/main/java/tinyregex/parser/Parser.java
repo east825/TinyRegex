@@ -21,9 +21,17 @@ public abstract class Parser<T> {
     }
 
     public final T parse(List<Token> toks, boolean matchEnd) throws NoParseException {
+        Result<T> result = null;
+        try {
+            result = parse(toks, 0);
+        } finally {
+            // clear memoizing cache
+            MemoizedParser.resetCache();
+        }
+        if (result.nextPos > toks.size())
+            throw new AssertionError("More tokens parsed than exist: consumed=" + result.nextPos + ", total=" + toks.size());
 
-        Result<T> result  = parse(toks, 0);
-        if (matchEnd && result.nextPos != toks.size()) {
+        if (matchEnd && result.nextPos < toks.size()) {
             throw new NoParseException("Unmatched tokens left: " + toks.subList(result.nextPos, toks.size()));
         }
         return result.data;
