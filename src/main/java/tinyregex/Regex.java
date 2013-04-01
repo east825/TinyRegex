@@ -152,7 +152,7 @@ public class Regex {
     }
 
 
-    public static synchronized boolean match(String regex, String text) {
+    public static boolean match(String regex, String text) {
         try {
             Pattern pattern = regexParser.parse(new RegexTokenizer().tokenize(regex), true);
             return pattern.match(text);
