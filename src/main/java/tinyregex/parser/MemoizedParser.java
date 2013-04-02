@@ -16,9 +16,7 @@ public final class MemoizedParser<T> extends Parser<T> {
     };
 
     static void resetCache() {
-        for (HashMap<Integer, Result<?>> cache: cachesRegistry.get().values()) {
-            cache.clear();
-        }
+        cachesRegistry.get().clear();
     }
 
     private final Parser<T> nested;
@@ -29,7 +27,9 @@ public final class MemoizedParser<T> extends Parser<T> {
 
     @Override
     protected Result<T> parse(List<Token> toks, int pos) throws NoParseException {
+        // get thread local cache for all memoized parsers
         IdentityHashMap<MemoizedParser<?>, HashMap<Integer, Result<?>>> globalCache = cachesRegistry.get();
+        // lazy instantiate parser-specific cache
         if (!globalCache.containsKey(this))
             globalCache.put(this, new HashMap<Integer, Result<?>>());
         HashMap<Integer, Result<?>> cache = globalCache.get(this);
