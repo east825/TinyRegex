@@ -73,7 +73,7 @@ public class Regex {
                 }
         );
 
-        Parser<Pattern> repeatable = memo(alt(
+        Parser<Pattern> repeatable = memoized(alt(
                 group,
                 charclass,
                 character,

@@ -28,7 +28,7 @@ public class Parsers {
         return new ManyParser<T>(p);
     }
 
-    public static <T> MemoizedParser<T> memo(Parser<T> p) {
+    public static <T> MemoizedParser<T> memoized(Parser<T> p) {
         return new MemoizedParser<T>(p);
     }
 
