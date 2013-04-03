@@ -30,34 +30,30 @@ public class StateMachine {
         // without overriden hashCode() method, it should behave just like IdentitySet
         Set<State> reachable = new HashSet<State>();
         reachable.add(start);
-        expand(reachable);
-        if (containsTerminateState(reachable)) {
+        // collect all reachable states (adding epsilon transitions)
+        if (expandEpsilon(reachable))
             return true;
-        }
         for (char c : input.toCharArray()) {
             Set<State> nextReachable = new HashSet<State>();
             for (State s : reachable) {
+                // skip intermediate states
                 if (s.transition() == null)
                     continue;
-                if (s.transition().possibleFor(c)) {
-                    State next = s.nextState();
-                    if (next == end) {
-                        return true;
-                    }
-                    nextReachable.add(next);
-                }
+                if (s.transition().possibleFor(c))
+                    nextReachable.add(s.nextState());
             }
             reachable = nextReachable;
-            expand(reachable);
-            if (containsTerminateState(reachable))
+            if (expandEpsilon(reachable))
                 return true;
         }
         return false;
     }
 
-    private void expand(Set<State> reachable) {
+    private boolean expandEpsilon(Set<State> reachable) {
         Set<State> fringe = new HashSet<State>(reachable);
         while (!fringe.isEmpty()) {
+            if (fringe.contains(end))
+                return true;
             Set<State> unvisited = new HashSet<State>();
             for (State s : fringe) {
                 unvisited.addAll(s.epsilonAdjacent());
@@ -67,16 +63,6 @@ public class StateMachine {
             fringe = unvisited;
             reachable.addAll(unvisited);
         }
-    }
-
-    private boolean containsTerminateState(Set<State> states) {
-        for (State s : states) {
-            if (s == end) {
-                return true;
-            }
-        }
         return false;
     }
-
-
 }
