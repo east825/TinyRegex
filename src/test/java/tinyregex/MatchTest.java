@@ -64,10 +64,17 @@ public class MatchTest {
     }
 
     @Test
-    public void illegalEscapeInTokenizer() {
+    public void illegalEscape() {
         exception.expect(IllegalArgumentException.class);
-        exception.expectMessage(containsString("Illegal escape sequence: \\p"));
+        exception.expectMessage("Illegal escape sequence at 2: \\p");
         match(".*\\p.*", "");
+    }
+
+    @Test
+    public void trailingBackslash() {
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("Trailing backslash at 0");
+        match("\\", "");
     }
 
     @Test

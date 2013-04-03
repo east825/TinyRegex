@@ -13,28 +13,32 @@ public class RegexTokenizer {
 
     public List<Token> tokenize(String s) {
         List<Token> toks = new ArrayList<Token>();
-        char[] chars = s.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (i < s.length() - 1 && chars[i] == '\\') {
-                if (METASYMBOLS.contains(chars[i + 1])) {
-                    toks.add(charToken(Token.Type.CHAR, chars[i + 1]));
-                } else if (CHARCLASSES.contains(chars[i + 1])) {
-                    toks.add(charToken(Token.Type.CHARCLASS, chars[i + 1]));
-                } else if (chars[i + 1] == 'n') {
-                    toks.add(charToken(Token.Type.CHAR, '\n'));
-                } else if (chars[i + 1] == 't') {
-                    toks.add(charToken(Token.Type.CHAR, '\t'));
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '\\') {
+                if (i < s.length() - 1) {
+                    char c2 = s.charAt(i + 1);
+                    if (METASYMBOLS.contains(c2)) {
+                        toks.add(charToken(Token.Type.CHAR, c2));
+                    } else if (CHARCLASSES.contains(c2)) {
+                        toks.add(charToken(Token.Type.CHARCLASS, c2));
+                    } else if (c2 == 'n') {
+                        toks.add(charToken(Token.Type.CHAR, '\n'));
+                    } else if (c2 == 't') {
+                        toks.add(charToken(Token.Type.CHAR, '\t'));
+                    } else {
+                        throw new IllegalArgumentException("Illegal escape sequence at " + i + ": " + s.substring(i, i + 2));
+                    }
+                    i++;
                 } else {
-                    throw new IllegalArgumentException("Illegal escape sequence: " + s.substring(i, i + 2));
+                    throw new IllegalArgumentException("Trailing backslash at " + i);
                 }
-                i++;
-            } else if (METASYMBOLS.contains(chars[i])) {
-                toks.add(charToken(Token.Type.META, chars[i]));
+            } else if (METASYMBOLS.contains(c)) {
+                toks.add(charToken(Token.Type.META, c));
             } else {
-                toks.add(charToken(Token.Type.CHAR, chars[i]));
+                toks.add(charToken(Token.Type.CHAR, c));
             }
         }
         return toks;
     }
-
 }
