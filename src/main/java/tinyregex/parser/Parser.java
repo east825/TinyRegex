@@ -21,13 +21,7 @@ public abstract class Parser<T> {
     }
 
     public final T parse(List<Token> toks, boolean matchEnd) throws NoParseException {
-        Result<T> result = null;
-        try {
-            result = parse(toks, 0);
-        } finally {
-            // clear memoizing cache
-            MemoizedParser.resetCache();
-        }
+        Result<T> result = parse(toks, 0);
         if (result.nextPos > toks.size())
             throw new AssertionError("More tokens parsed than exist: consumed=" + result.nextPos + ", total=" + toks.size());
 

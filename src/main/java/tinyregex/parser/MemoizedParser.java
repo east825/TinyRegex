@@ -5,38 +5,39 @@ import tinyregex.parser.lexer.Token;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.WeakHashMap;
 
 public final class MemoizedParser<T> extends Parser<T> {
-    private static final ThreadLocal<IdentityHashMap<MemoizedParser<?>, HashMap<Integer, Result<?>>>> cachesRegistry =
-            new ThreadLocal<IdentityHashMap<MemoizedParser<?>, HashMap<Integer, Result<?>>>>() {
-        @Override
-        protected IdentityHashMap<MemoizedParser<?>, HashMap<Integer, Result<?>>> initialValue() {
-            return new IdentityHashMap<MemoizedParser<?>, HashMap<Integer, Result<?>>>();
-        }
-    };
-
-    static void resetCache() {
-        cachesRegistry.get().clear();
-    }
+    private static final IdentityHashMap<MemoizedParser<?>, WeakHashMap<List<Token>, HashMap<Integer, Result<?>>>> cachesRegistry =
+            new IdentityHashMap<MemoizedParser<?>, WeakHashMap<List<Token>, HashMap<Integer, Result<?>>>>();
 
     private final Parser<T> nested;
+    private final WeakHashMap<List<Token>, HashMap<Integer, Result<?>>> cache;
 
     public MemoizedParser(Parser<T> nested) {
         this.nested = nested;
+        cachesRegistry.put(this, new WeakHashMap<List<Token>, HashMap<Integer, Result<?>>>());
+        cache = cachesRegistry.get(this);
     }
 
     @Override
     protected Result<T> parse(List<Token> toks, int pos) throws NoParseException {
-        // get thread local cache for all memoized parsers
-        IdentityHashMap<MemoizedParser<?>, HashMap<Integer, Result<?>>> globalCache = cachesRegistry.get();
-        // lazy instantiate parser-specific cache
-        if (!globalCache.containsKey(this))
-            globalCache.put(this, new HashMap<Integer, Result<?>>());
-        HashMap<Integer, Result<?>> cache = globalCache.get(this);
-        if (!cache.containsKey(pos))
-            cache.put(pos, nested.parse(toks, pos));
+        // Lazy instantiate cache for processed token sequence
+        if (!cache.containsKey(toks)) {
+            // thread safety through double-synchronized check
+            // otherwise attempt to parse the same sequence if other thread with
+            // this parser may result in erasure of all results obtained so far
+            synchronized (cache) {
+                if (!cache.containsKey(toks))
+                    cache.put(toks, new HashMap<Integer, Result<?>>());
+            }
+        }
+        // on the other hand parsing input for one position once again seems not so devastating
+        HashMap<Integer, Result<?>> tokensCache = cache.get(toks);
+        if (!tokensCache.containsKey(pos))
+            tokensCache.put(pos, nested.parse(toks, pos));
         @SuppressWarnings("unchecked")
-        Result<T> result = (Result<T>) cache.get(pos);
+        Result<T> result = (Result<T>) tokensCache.get(pos);
         return result;
     }
 }
