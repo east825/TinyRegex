@@ -28,14 +28,19 @@ public final class MemoizedParser<T> extends Parser<T> {
             // otherwise attempt to parse the same sequence if other thread with
             // this parser may result in erasure of all results obtained so far
             synchronized (cache) {
-                if (!cache.containsKey(toks))
+                if (!cache.containsKey(toks)) {
                     cache.put(toks, new HashMap<Integer, Result<?>>());
+                }
             }
         }
-        // on the other hand parsing input for one position once again seems not so devastating
         HashMap<Integer, Result<?>> tokensCache = cache.get(toks);
-        if (!tokensCache.containsKey(pos))
-            tokensCache.put(pos, nested.parse(toks, pos));
+        if (!tokensCache.containsKey(pos)) {
+            synchronized (tokensCache) {
+                if (!tokensCache.containsKey(pos)) {
+                    tokensCache.put(pos, nested.parse(toks, pos));
+                }
+            }
+        }
         @SuppressWarnings("unchecked")
         Result<T> result = (Result<T>) tokensCache.get(pos);
         return result;
