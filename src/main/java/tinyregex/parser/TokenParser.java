@@ -2,6 +2,7 @@ package tinyregex.parser;
 
 import tinyregex.parser.lexer.Token;
 
+import java.util.HashMap;
 import java.util.List;
 
 public final class TokenParser extends Parser<Token> {
@@ -18,7 +19,7 @@ public final class TokenParser extends Parser<Token> {
     }
 
     @Override
-    protected Result<Token> parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<Token> parse(List<Token> toks, int pos, HashMap<Integer, Result<?>> cache) throws NoParseException {
         if (pos >= toks.size()) {
             throw new NoParseException("Unexpected end of token sequence");
         }

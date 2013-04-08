@@ -2,6 +2,7 @@ package tinyregex.parser;
 
 import tinyregex.parser.lexer.Token;
 
+import java.util.HashMap;
 import java.util.List;
 
 public final class MaybeParser<T>  extends Parser<T> {
@@ -12,9 +13,9 @@ public final class MaybeParser<T>  extends Parser<T> {
     }
 
     @Override
-    protected Result<T> parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<T> parse(List<Token> toks, int pos, HashMap<Integer, Result<?>> cache) throws NoParseException {
         try {
-            return parser.parse(toks, pos);
+            return parser.parse(toks, pos, cache);
         } catch (NoParseException e) {
             // ignored
         }

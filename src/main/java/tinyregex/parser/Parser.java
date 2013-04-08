@@ -2,6 +2,7 @@ package tinyregex.parser;
 
 import tinyregex.parser.lexer.Token;
 
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Parser<T> {
@@ -21,7 +22,7 @@ public abstract class Parser<T> {
     }
 
     public final T parse(List<Token> toks, boolean matchEnd) throws NoParseException {
-        Result<T> result = parse(toks, 0);
+        Result<T> result = parse(toks, 0, new HashMap<Integer, Result<?>>());
         if (result.nextPos > toks.size())
             throw new AssertionError("More tokens parsed than exist: consumed=" + result.nextPos + ", total=" + toks.size());
 
@@ -31,5 +32,5 @@ public abstract class Parser<T> {
         return result.data;
     }
 
-    protected abstract Result<T> parse(List<Token> toks, int pos) throws NoParseException;
+    protected abstract Result<T> parse(List<Token> toks, int pos, HashMap<Integer, Result<?>> cache) throws NoParseException;
 }

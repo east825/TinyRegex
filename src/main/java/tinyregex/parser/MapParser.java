@@ -2,6 +2,7 @@ package tinyregex.parser;
 
 import tinyregex.parser.lexer.Token;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class MapParser<T1, T2> extends Parser<T2> {
@@ -14,8 +15,8 @@ public class MapParser<T1, T2> extends Parser<T2> {
     }
 
     @Override
-    public Result<T2> parse(List<Token> toks, int pos) throws NoParseException {
-        Result<T1> res = parser.parse(toks, pos);
+    public Result<T2> parse(List<Token> toks, int pos, HashMap<Integer, Result<?>> cache) throws NoParseException {
+        Result<T1> res = parser.parse(toks, pos, cache);
         return new Result<T2>(fun.map(res.data), res.nextPos);
     }
 }

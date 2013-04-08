@@ -2,6 +2,7 @@ package tinyregex.parser;
 
 import tinyregex.parser.lexer.Token;
 
+import java.util.HashMap;
 import java.util.List;
 
 public final class ForwardParser<T> extends Parser<T> {
@@ -12,10 +13,10 @@ public final class ForwardParser<T> extends Parser<T> {
     }
 
     @Override
-    protected Result<T> parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<T> parse(List<Token> toks, int pos, HashMap<Integer, Result<?>> cache) throws NoParseException {
         if (parser == null) {
             throw new IllegalStateException("Forward parser was not defined");
         }
-        return parser.parse(toks, pos);
+        return parser.parse(toks, pos, cache);
     }
 }

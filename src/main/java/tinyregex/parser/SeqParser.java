@@ -3,6 +3,7 @@ package tinyregex.parser;
 import tinyregex.parser.lexer.Token;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public final class SeqParser<T> extends Parser<List<T>> {
@@ -13,10 +14,10 @@ public final class SeqParser<T> extends Parser<List<T>> {
     }
 
     @Override
-    protected Result<List<T>> parse(List<Token> toks, int pos) throws NoParseException {
+    protected Result<List<T>> parse(List<Token> toks, int pos, HashMap<Integer, Result<?>> cache) throws NoParseException {
         List<T> acc = new ArrayList<T>();
         for (Parser<T> p : parsers) {
-            Result<T> res = p.parse(toks, pos);
+            Result<T> res = p.parse(toks, pos, cache);
             pos = res.nextPos;
             if (!(p instanceof IgnoredResultParser))
                 acc.add(res.data);
