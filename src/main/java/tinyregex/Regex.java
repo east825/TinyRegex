@@ -27,7 +27,7 @@ public class Regex {
     @SuppressWarnings("unchecked")
     private static Parser<Pattern> buildParser() {
         ForwardParser<Pattern> altRule = fwd();
-        Parser<Pattern> character = map(
+        Parser<Pattern> characterRule = map(
                 tok(Type.CHAR),
                 new MapFunction<Token, Pattern>() {
                     @Override
@@ -72,16 +72,16 @@ public class Regex {
                 }
         );
 
-        Parser<Pattern> repeatable = memoized(alt(
+        Parser<Pattern> repeatableRule = memoized(alt(
                 groupRule,
                 charclassRule,
-                character,
+                characterRule,
                 dotRule
         ));
 
         Parser<Pattern> starRule = map(
                 seq(
-                        repeatable,
+                        repeatableRule,
                         skip(tok(Type.META, "*"), Pattern.class)
                 ),
                 new MapFunction<List<Pattern>, Pattern>() {
@@ -94,7 +94,7 @@ public class Regex {
 
         Parser<Pattern> plusRule = map(
                 seq(
-                        repeatable,
+                        repeatableRule,
                         skip(tok(Type.META, "+"), Pattern.class)
                 ),
                 new MapFunction<List<Pattern>, Pattern>() {
@@ -105,12 +105,12 @@ public class Regex {
                 }
         );
 
-        Parser<Pattern> seq = map(
+        Parser<Pattern> seqRule = map(
                 oneplus(
                         alt(
                                 starRule,
                                 plusRule,
-                                repeatable
+                                repeatableRule
                         )
                 ),
                 new MapFunction<List<Pattern>, Pattern>() {
@@ -125,14 +125,14 @@ public class Regex {
                 // List<List<Pattern>>
                 seq(
                         // Pattern -> List<Pattern>
-                        expanded(seq),
+                        expanded(seqRule),
                         // List<Pattern>
                         many(
                                 // List<Pattern> -> Pattern
                                 collapsed(
                                         seq(
                                                 skip(tok(Type.META, "|"), Pattern.class),
-                                                seq
+                                                seqRule
                                         )
                                 )
                         )
