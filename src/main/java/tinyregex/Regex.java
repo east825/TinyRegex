@@ -18,16 +18,15 @@ public class Regex {
      * <p/>
      * regex ::= alt
      * alt ::= seq, {'|', seq}
-     * seq ::= {repeat | repeatable}
-     * repeat ::= star | plus
-     * repeatable ::= charclass | group | char | dot
-     * star = repeatable, '*'
-     * star = repeatable, '+'
+     * seq ::= star | plus | repeatable, {star | plus | repeatable}
+     * repeatable ::= group | charclass | char | dot
+     * star ::= repeatable, '*'
+     * star ::= repeatable, '+'
      * group ::= '(', alt, ')'
      */
     @SuppressWarnings("unchecked")
     private static Parser<Pattern> buildParser() {
-        ForwardParser<Pattern> alt = fwd();
+        ForwardParser<Pattern> altRule = fwd();
         Parser<Pattern> character = map(
                 tok(Type.CHAR),
                 new MapFunction<Token, Pattern>() {
@@ -37,7 +36,7 @@ public class Regex {
                     }
                 }
         );
-        Parser<Pattern> charclass = map(
+        Parser<Pattern> charclassRule = map(
                 tok(Type.CHARCLASS),
                 new MapFunction<Token, Pattern>() {
                     @Override
@@ -48,10 +47,10 @@ public class Regex {
                     }
                 }
         );
-        Parser<Pattern> group = map(
+        Parser<Pattern> groupRule = map(
                 seq(
                         skip(tok(Type.META, "("), Pattern.class),
-                        alt,
+                        altRule,
                         skip(tok(Type.META, ")"), Pattern.class)
 
                 ),
@@ -63,7 +62,7 @@ public class Regex {
                 }
         );
 
-        Parser<Pattern> dot = map(
+        Parser<Pattern> dotRule = map(
                 tok(Type.META, "."),
                 new MapFunction<Token, Pattern>() {
                     @Override
@@ -74,13 +73,13 @@ public class Regex {
         );
 
         Parser<Pattern> repeatable = memoized(alt(
-                group,
-                charclass,
+                groupRule,
+                charclassRule,
                 character,
-                dot
+                dotRule
         ));
 
-        Parser<Pattern> star = map(
+        Parser<Pattern> starRule = map(
                 seq(
                         repeatable,
                         skip(tok(Type.META, "*"), Pattern.class)
@@ -93,7 +92,7 @@ public class Regex {
                 }
         );
 
-        Parser<Pattern> plus = map(
+        Parser<Pattern> plusRule = map(
                 seq(
                         repeatable,
                         skip(tok(Type.META, "+"), Pattern.class)
@@ -109,8 +108,8 @@ public class Regex {
         Parser<Pattern> seq = map(
                 oneplus(
                         alt(
-                                star,
-                                plus,
+                                starRule,
+                                plusRule,
                                 repeatable
                         )
                 ),
@@ -122,7 +121,7 @@ public class Regex {
                 }
         );
 
-        alt.define(map(
+        altRule.define(map(
                 // List<List<Pattern>>
                 seq(
                         // Pattern -> List<Pattern>
@@ -148,7 +147,7 @@ public class Regex {
                     }
                 }
         ));
-        return alt;
+        return altRule;
     }
 
 
